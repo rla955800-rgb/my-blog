@@ -1,5 +1,12 @@
 [
   {
+    "slug": "today-i-learned",
+    "title": "오늘 배운 것",
+    "date": "2026-11-09",
+    "tags": ["공부", "개발"],
+    "description": "클로드 코드로 블로그를 만들면서 알게 된 HTML, CSS, JavaScript의 역할을 정리했습니다."
+  },
+  {
     "slug": "markdown-guide",
     "title": "마크다운 문법 안내",
     "date": "2026-11-09",
