@@ -239,6 +239,66 @@ a {
   font-size: 0.9375rem;
 }
 
+/* ===== 웹앱 카드 ===== */
+.section-title {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.app-section {
+  margin-bottom: 40px;
+}
+
+.app-list {
+  display: grid;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.app-card-title {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+  line-height: 1.45;
+}
+
+.app-card-title a {
+  display: block;
+  padding: 4px 0;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.app-card-title a:hover {
+  color: var(--accent);
+}
+
+.app-card-desc {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* 게임 높이가 iframe 폭에 비례하므로(폭 290px→약 510px, 500px 이상→668px) 화면 폭에 맞춰 키워 내부 스크롤을 없앤다 */
+.app-card-frame {
+  display: block;
+  width: 100%;
+  height: clamp(528px, calc(256px + 76vw), 684px);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
 .post-list {
   margin: 0;
   padding: 0;

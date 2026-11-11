@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>숫자 합치기</title>
+  <meta name="description" content="같은 숫자를 밀어 합쳐 2048을 만드는 퍼즐. 키보드와 스와이프로 플레이.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%A2%3C/text%3E%3C/svg%3E">
+  <script>
+    // 블로그에서 고른 테마를 첫 화면 전에 적용해 깜빡임을 막는다
+    try {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark' || theme === 'light') document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="ui.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1 class="app-title">숫자 합치기</h1>
+      <div class="scoreboard">
+        <div class="score-box">
+          <span class="score-label" id="score-label">점수</span>
+          <span class="score-value" id="score" aria-labelledby="score-label">0</span>
+        </div>
+        <div class="score-box">
+          <span class="score-label" id="best-label">최고</span>
+          <span class="score-value" id="best" aria-labelledby="best-label">0</span>
+        </div>
+        <button type="button" class="button" id="new-game">새 게임</button>
+      </div>
+      <p class="app-intro">같은 숫자를 밀어 합쳐 2048을 만들어 보세요.</p>
+    </header>
+
+    <main class="app-main">
+      <div class="board-wrap">
+        <div class="board" id="board" tabindex="0" role="group" aria-label="게임 보드" aria-describedby="controls-hint">
+          <div class="cells" id="cells" aria-hidden="true"></div>
+          <div class="tiles" id="tiles"></div>
+        </div>
+
+        <div class="overlay" id="overlay" role="dialog" aria-labelledby="overlay-title" hidden>
+          <p class="overlay-title" id="overlay-title"></p>
+          <p class="overlay-detail" id="overlay-detail"></p>
+          <div class="overlay-actions">
+            <button type="button" class="button" id="continue">계속하기</button>
+            <button type="button" class="button" id="overlay-new-game">새 게임</button>
+            <button type="button" class="button" id="retry">다시 하기</button>
+          </div>
+        </div>
+      </div>
+      <noscript>
+        <p class="app-intro">이 게임은 JavaScript가 켜져 있어야 플레이할 수 있어요.</p>
+      </noscript>
+    </main>
+
+    <footer class="app-footer">
+      <p id="controls-hint">방향키·WASD·스와이프로 이동</p>
+    </footer>
+  </div>
+
+  <div class="visually-hidden" id="status" aria-live="polite"></div>
+</body>
+</html>

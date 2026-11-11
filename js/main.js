@@ -4,6 +4,7 @@ import { initTheme } from './theme.js';
 
 const SITE_TITLE = '나의 블로그';
 const POSTS_DIR = 'posts/';
+const APPS_DIR = 'apps/';
 const SLUG_PATTERN = /^[\w-]+$/;
 
 const app = document.getElementById('app');
@@ -23,6 +24,18 @@ const loadPosts = async () => {
     .map((post) => ({ ...post, tags: toTags(post.tags) }))
     .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
   return postsCache;
+};
+
+// 웹앱 목록이 없거나 깨져도 글 목록은 보여야 하므로 실패하면 빈 배열로 둔다
+const loadApps = async () => {
+  try {
+    const response = await fetch(`${APPS_DIR}index.json`);
+    if (!response.ok) return [];
+    const apps = await response.json();
+    return apps.filter((item) => SLUG_PATTERN.test(item.slug || ''));
+  } catch {
+    return [];
+  }
 };
 
 // ===== 화면 조각 =====
@@ -60,6 +73,29 @@ const postItemHtml = (post) => `
     </article>
   </li>`;
 
+const appCardHtml = (item) => {
+  const href = `${APPS_DIR}${item.slug}/`;
+  const title = escapeHtml(item.title || item.slug);
+  return `
+  <li class="app-card">
+    <article>
+      <h3 class="app-card-title"><a href="${href}">${title}</a></h3>
+      ${item.description ? `<p class="app-card-desc">${escapeHtml(item.description)}</p>` : ''}
+      <iframe class="app-card-frame" src="${href}" title="${title} 미리보기" loading="lazy"></iframe>
+    </article>
+  </li>`;
+};
+
+const appsSectionHtml = (apps) => {
+  if (!apps.length) return '';
+  return `
+    <section class="app-section" aria-labelledby="apps-heading">
+      <h2 class="section-title" id="apps-heading">미니 웹앱</h2>
+      <ul class="app-list">${apps.map(appCardHtml).join('')}</ul>
+    </section>
+    <h2 class="section-title">글</h2>`;
+};
+
 const navLinkHtml = (post, label, className) => `
   <a class="post-nav-link ${className}" href="${postHref(post.slug)}">
     <span class="post-nav-label">${label}</span>
@@ -81,14 +117,14 @@ const notFoundView = () => messageView('글을 찾을 수 없어요', '주소가
 // ===== 화면 =====
 
 const listView = async (tag) => {
-  const posts = await loadPosts();
+  const [posts, apps] = await Promise.all([loadPosts(), tag ? [] : loadApps()]);
   const filtered = tag ? posts.filter((post) => post.tags.includes(tag)) : posts;
   const header = tag
     ? `<header class="page-header">
         <h1 class="page-title">#${escapeHtml(tag)}</h1>
         <p class="page-desc">${filtered.length}개의 글 · <a href="#/">전체 글 보기</a></p>
       </header>`
-    : '<h1 class="visually-hidden">전체 글</h1>';
+    : `<h1 class="visually-hidden">전체 글</h1>${appsSectionHtml(apps)}`;
   const body = filtered.length
     ? `<ul class="post-list">${filtered.map(postItemHtml).join('')}</ul>`
     : '<p class="message">아직 글이 없어요.</p>';
