@@ -1,5 +1,10 @@
 [
   {
+    "slug": "pixel-editor",
+    "title": "도트 그림판",
+    "description": "16×16 칸에 도트를 찍어 그리고 PNG로 저장하는 픽셀 아트 에디터. 마우스·터치·키보드로 그려요."
+  },
+  {
     "slug": "number-merge",
     "title": "숫자 합치기",
     "description": "같은 숫자를 밀어 합쳐 2048을 만드는 퍼즐. 방향키·WASD·스와이프로 플레이해요."

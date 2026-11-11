@@ -289,11 +289,11 @@ a {
   font-size: 0.9375rem;
 }
 
-/* 게임 높이가 iframe 폭에 비례하므로(폭 290px→약 510px, 500px 이상→668px) 화면 폭에 맞춰 키워 내부 스크롤을 없앤다 */
+/* 실제 높이는 main.js가 앱 콘텐츠에 맞춰 정한다. 이 값은 앱을 읽기 전 기본값 */
 .app-card-frame {
   display: block;
   width: 100%;
-  height: clamp(528px, calc(256px + 76vw), 684px);
+  height: 640px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--bg);

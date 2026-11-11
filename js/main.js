@@ -171,6 +171,44 @@ const postView = async (slug) => {
   };
 };
 
+// ===== 웹앱 iframe 높이 =====
+
+// 앱 문서의 실제 콘텐츠 높이. body의 min-height는 iframe 높이를 따라가므로 자식 요소의 아래 끝으로 잰다
+const contentHeight = (doc) => {
+  const view = doc.defaultView;
+  const bodyStyle = view.getComputedStyle(doc.body);
+  let bottom = 0;
+  for (const el of doc.body.children) {
+    const rect = el.getBoundingClientRect();
+    if (!rect.height) continue;
+    bottom = Math.max(bottom, rect.bottom + (parseFloat(view.getComputedStyle(el).marginBottom) || 0));
+  }
+  return Math.ceil(bottom + view.scrollY + (parseFloat(bodyStyle.paddingBottom) || 0));
+};
+
+// 같은 출처 앱이라 문서를 직접 읽어 높이를 맞춘다. 읽지 못하면 CSS 기본 높이를 그대로 둔다
+const fitFrame = (frame) => {
+  frame.addEventListener('load', () => {
+    try {
+      const doc = frame.contentDocument;
+      // 높이를 맞추기 전 잠깐 생기는 세로 스크롤바가 폭을 줄여 높이 계산을 흔들지 않게 한다
+      doc.documentElement.style.overflowY = 'hidden';
+      const fit = () => {
+        const height = contentHeight(doc);
+        // iframe 테두리만큼 더해야 안쪽 영역이 콘텐츠 높이와 같아진다
+        const border = frame.offsetHeight - frame.clientHeight;
+        if (height > 0) frame.style.height = `${height + border}px`;
+      };
+      const observer = new frame.contentWindow.ResizeObserver(fit);
+      for (const el of doc.body.children) observer.observe(el);
+      frame.contentWindow.addEventListener('resize', fit);
+      fit();
+    } catch (error) {
+      console.warn('웹앱 높이를 맞추지 못했어요', error);
+    }
+  });
+};
+
 // ===== 라우팅 =====
 
 const parseRoute = () => {
@@ -205,6 +243,7 @@ const render = async () => {
   if (renderId !== lastRenderId) return;
 
   app.innerHTML = view.html;
+  app.querySelectorAll('.app-card-frame').forEach(fitFrame);
   app.removeAttribute('aria-busy');
   document.title = view.title ? `${view.title} · ${SITE_TITLE}` : SITE_TITLE;
   window.scrollTo({ top: 0, behavior: 'instant' });
