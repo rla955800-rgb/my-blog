@@ -188,7 +188,11 @@ const contentHeight = (doc) => {
 
 // 같은 출처 앱이라 문서를 직접 읽어 높이를 맞춘다. 읽지 못하면 CSS 기본 높이를 그대로 둔다
 const fitFrame = (frame) => {
+  let stopFitting = () => {};
   frame.addEventListener('load', () => {
+    // iframe 문서가 다시 로드되면 이전 문서에 걸어 둔 관찰을 먼저 끊는다
+    stopFitting();
+    stopFitting = () => {};
     try {
       const doc = frame.contentDocument;
       // 높이를 맞추기 전 잠깐 생기는 세로 스크롤바가 폭을 줄여 높이 계산을 흔들지 않게 한다
@@ -201,7 +205,12 @@ const fitFrame = (frame) => {
       };
       const observer = new frame.contentWindow.ResizeObserver(fit);
       for (const el of doc.body.children) observer.observe(el);
-      frame.contentWindow.addEventListener('resize', fit);
+      const view = frame.contentWindow;
+      view.addEventListener('resize', fit);
+      stopFitting = () => {
+        observer.disconnect();
+        view.removeEventListener('resize', fit);
+      };
       fit();
     } catch (error) {
       console.warn('웹앱 높이를 맞추지 못했어요', error);

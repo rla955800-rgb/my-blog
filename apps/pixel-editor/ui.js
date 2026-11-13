@@ -329,8 +329,16 @@ const bindPointer = (canvasEl) => {
     finishStroke();
   };
 
+  // 시스템 제스처 등으로 취소된 획은 기록에 남기지 않고 버린다
+  const cancelStroke = (event) => {
+    if (!ctx.stroke || event.pointerId !== ctx.stroke.pointerId) return;
+    ctx.stroke = null;
+    ctx.draft = null;
+    render();
+  };
+
   canvasEl.addEventListener('pointerup', endStroke);
-  canvasEl.addEventListener('pointercancel', endStroke);
+  canvasEl.addEventListener('pointercancel', cancelStroke);
   canvasEl.addEventListener('lostpointercapture', endStroke);
 
   canvasEl.addEventListener('pointerleave', () => {

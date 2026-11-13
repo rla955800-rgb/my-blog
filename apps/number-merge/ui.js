@@ -205,6 +205,12 @@ export const bindSwipe = (boardEl) => {
   boardEl.addEventListener('pointerdown', (event) => {
     if (!event.isPrimary) return;
     start = { x: event.clientX, y: event.clientY, id: event.pointerId };
+    // 보드 밖에서 손을 떼도 pointerup을 받도록 캡처한다
+    try {
+      boardEl.setPointerCapture(event.pointerId);
+    } catch (e) {
+      // 캡처가 안 되는 환경이어도 보드 안 스와이프는 동작한다
+    }
   });
 
   boardEl.addEventListener('pointerup', (event) => {
